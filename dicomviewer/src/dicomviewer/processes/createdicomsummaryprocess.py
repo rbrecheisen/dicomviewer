@@ -1,6 +1,7 @@
 import os
+import pandas as pd
 from dicomviewer.processes.process import Process
-from dicomviewer.utils.utils import is_dicom, load_dicom, is_jpeg2000_compressed
+from dicomviewer.utils.utils import is_dicom, load_dicom
 
 
 class CreateDicomSummaryProcess(Process):
@@ -17,25 +18,52 @@ class CreateDicomSummaryProcess(Process):
 
     def execute(self):
         count = 0
-        series = {}
+        series_dict = {}
         for root, dirs, files in os.walk(self.root_dir()):
             for f in files:
                 f_path = os.path.join(root, f)
                 if is_dicom(f_path):
                     p = load_dicom(f_path, stop_before_pixels=True)
                     if 'SeriesInstanceUID' in p:
-                        if p.SeriesInstanceUID not in series.keys():
-                            series[p.SeriesInstanceUID] = {
-                                'series_description': p.SeriesDescription,
+                        if p.SeriesInstanceUID not in series_dict.keys():
+                            series_dict[p.SeriesInstanceUID] = {
+                                'description': p.SeriesDescription,
                                 'rows': p.Rows,
                                 'cols': p.Columns,
-                                'spacing_x': p.PixelSpacing[0],
-                                'spacing_y': p.PixelSpacing[1],
-                                'slice_thickness': p.SliceThickness,
+                                'spacingx': p.PixelSpacing[0],
+                                'spacingy': p.PixelSpacing[1],
+                                'thickness': p.SliceThickness,
                                 'manufacturer': p.Manufacturer,
                                 'files': [],
                             }
-                        series[p.SeriesInstanceUID]['files'].append(f_path)
-                    self.progress.emit(count)
-                    count += 1
-        return series
+                        series_dict[p.SeriesInstanceUID]['files'].append(f_path)
+                        self.progress.emit(count)
+                        count += 1
+                    else:
+                        print(f'DICOM file has no SeriesInstanceUID')
+        return series_dict
+    
+    # HELPERS
+
+    def build_df_from_series_dict(self, series_dict):
+        data = {
+            'description': [],
+            'rows': [],
+            'cols': [],
+            'spacingx': [],
+            'spacingy': [],
+            'thickness': [],
+            'manufacturer': [],
+            'nr_files': [],
+        }
+        for k, v in series_dict.items():
+            data['description'].append(v['description'])
+            data['rows'].append(v['rows'])
+            data['cols'].append(v['cols'])
+            data['spacingx'].append(v['spacingx'])
+            data['spacingy'].append(v['spacingy'])
+            data['thickness'].append(v['thickness'])
+            data['manufacturer'].append(v['manufacturer'])
+            data['nr_files'].append(len(v['files']))
+        df = pd.DataFrame(data=data)
+        return df
