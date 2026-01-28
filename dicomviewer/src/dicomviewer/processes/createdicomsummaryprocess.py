@@ -15,9 +15,16 @@ class CreateDicomSummaryProcess(Process):
 
     def execute(self):
         count = 0
+        series = {}
         for root, dirs, files in os.walk(self.root_dir()):
             for f in files:
                 f_path = os.path.join(root, f)
                 if is_dicom(f_path):
+                    p = load_dicom(f_path, stop_before_pixels=True)
+                    if 'SeriesInstanceUID' in p:
+                        if p.SeriesInstanceUID not in series.keys():
+                            series[p.SeriesInstanceUID] = []
+                        series[p.SeriesInstanceUID].append(f_path)
                     self.progress.emit(count)
-        return "some result"
+                    count += 1
+        return series
