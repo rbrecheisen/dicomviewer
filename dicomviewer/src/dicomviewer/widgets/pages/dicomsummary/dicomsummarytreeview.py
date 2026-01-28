@@ -35,7 +35,7 @@ class DicomSummaryTreeView(QTreeView):
 
     def build_model_from_series_dict(self, series_dict, keyword=None):
         model = QStandardItemModel()
-        model.setHorizontalHeaderLabels(["description", "nr_files"])
+        model.setHorizontalHeaderLabels(['Series description', 'Nr. files'])
         for suid, series_info in series_dict.items():
             description = series_info.get('description', '')
             if keyword is None or (keyword is not None and keyword in description):
