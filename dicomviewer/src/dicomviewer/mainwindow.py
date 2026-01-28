@@ -15,7 +15,10 @@ from PySide6.QtGui import (
 from dicomviewer.settings import Settings
 from dicomviewer.widgets.centraldockwidget import CentralDockWidget
 from dicomviewer.widgets.logdockwidget import LogDockWidget
-from dicomviewer.widgets.pages.page import Page
+from dicomviewer.widgets.pages.dicomsummary.dicomsummarypage import DicomSummaryPage
+from dicomviewer.utils.logmanager import LogManager
+
+LOG = LogManager()
 
 
 class MainWindow(QMainWindow):
@@ -25,6 +28,7 @@ class MainWindow(QMainWindow):
         self._central_dockwidget = None
         self._log_dockwidget = None
         self._page = None
+        self._dicom_summary_page = None
         self.init()
 
     # INITIALIZATION
@@ -48,19 +52,20 @@ class MainWindow(QMainWindow):
     def central_dockwidget(self):
         if not self._central_dockwidget:
             self._central_dockwidget = CentralDockWidget(self)
-            self._central_dockwidget.add_page(self.page(), self.page().name())
-            self._central_dockwidget.select_panel(self.page().name())
+            self._central_dockwidget.add_page(self.dicom_summary_page(), self.dicom_summary_page().name())
+            self._central_dockwidget.select_panel(self.dicom_summary_page().name())
         return self._central_dockwidget
     
     def log_dockwidget(self):
         if not self._log_dockwidget:
             self._log_dockwidget = LogDockWidget(self)
+            LOG.add_listener(self._log_dockwidget)
         return self._log_dockwidget
     
-    def page(self):
-        if not self._page:
-            self._page = Page(name='page', title='')
-        return self._page
+    def dicom_summary_page(self):
+        if not self._dicom_summary_page:
+            self._dicom_summary_page = DicomSummaryPage(self.settings())
+        return self._dicom_summary_page
     
     # EVENT HANDLERS
 
