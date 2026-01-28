@@ -1,3 +1,4 @@
+import json
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QPushButton,
@@ -49,7 +50,7 @@ class DicomSummaryPage(Page):
             self._loading_process.start()
 
     def handle_process_finished(self, result):
-        LOG.info(result)
+        LOG.info(json.dumps(result, indent=4))
         QMessageBox.information(self, 'Info', 'Process finished')
 
     def handle_process_failed(self):

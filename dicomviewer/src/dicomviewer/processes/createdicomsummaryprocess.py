@@ -12,6 +12,8 @@ class CreateDicomSummaryProcess(Process):
 
     def root_dir(self):
         return self._root_dir
+    
+    # EXECUTION
 
     def execute(self):
         count = 0
@@ -23,8 +25,17 @@ class CreateDicomSummaryProcess(Process):
                     p = load_dicom(f_path, stop_before_pixels=True)
                     if 'SeriesInstanceUID' in p:
                         if p.SeriesInstanceUID not in series.keys():
-                            series[p.SeriesInstanceUID] = []
-                        series[p.SeriesInstanceUID].append(f_path)
+                            series[p.SeriesInstanceUID] = {
+                                'series_description': p.SeriesDescription,
+                                'rows': p.Rows,
+                                'cols': p.Columns,
+                                'spacing_x': p.PixelSpacing[0],
+                                'spacing_y': p.PixelSpacing[1],
+                                'slice_thickness': p.SliceThickness,
+                                'manufacturer': p.Manufacturer,
+                                'files': [],
+                            }
+                        series[p.SeriesInstanceUID]['files'].append(f_path)
                     self.progress.emit(count)
                     count += 1
         return series
