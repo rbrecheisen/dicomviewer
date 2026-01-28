@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (
     QMessageBox,
 )
 from dicomviewer.widgets.pages.page import Page
-from dicomviewer.processes.dummyprocess import DummyProcess
+from dicomviewer.processes.createdicomsummaryprocess import CreateDicomSummaryProcess
 from dicomviewer.utils.logmanager import LogManager
 
 LOG = LogManager()
@@ -42,13 +42,14 @@ class DicomSummaryPage(Page):
         dir_path = QFileDialog.getExistingDirectory(dir=last_directory)
         if dir_path:
             self.settings().set('last_directory', dir_path)
-            self._loading_process = DummyProcess()
+            self._loading_process = CreateDicomSummaryProcess(dir_path)
             self._loading_process.progress.connect(lambda progress: LOG.info(f'progress: {progress}'))
             self._loading_process.finished.connect(self.handle_process_finished)
             self._loading_process.failed.connect(self.handle_process_failed)
             self._loading_process.start()
 
-    def handle_process_finished(self):
+    def handle_process_finished(self, result):
+        LOG.info(result)
         QMessageBox.information(self, 'Info', 'Process finished')
 
     def handle_process_failed(self):
