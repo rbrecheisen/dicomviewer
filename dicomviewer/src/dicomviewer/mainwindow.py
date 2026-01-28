@@ -59,7 +59,7 @@ class MainWindow(QMainWindow):
     
     def page(self):
         if not self._page:
-            self._page = Page(name='page', title='My Page')
+            self._page = Page(name='page', title='')
         return self._page
     
     # EVENT HANDLERS
