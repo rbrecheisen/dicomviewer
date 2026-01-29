@@ -40,6 +40,7 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QIcon(self.settings().get('mainwindow/icon_path')))
         self.load_geometry_and_state()
         self.statusBar().showMessage('Ready')
+        LOG.info(f'Settings path: {self.settings().fileName()}')
 
     # GETTERS
 
