@@ -25,9 +25,11 @@ class DicomSummaryTreeView(QTreeView):
         self._series_dict = series_dict
         self.setModel(self.build_model_from_series_dict(self._series_dict, keyword))
         self.header().setStretchLastSection(False)
-        self.header().setSectionResizeMode(0, QHeaderView.Stretch)
-        self.header().setSectionResizeMode(1, QHeaderView.ResizeToContents)
-        self.setColumnWidth(1, 50)
+        self.header().setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        self.header().setSectionResizeMode(1, QHeaderView.Stretch)
+        self.header().setSectionResizeMode(2, QHeaderView.ResizeToContents)
+        self.setColumnWidth(0, 80)
+        self.setColumnWidth(2, 40)
 
     def filter_model_with_keyword(self, keyword):
         if self.series_dict():
@@ -35,17 +37,19 @@ class DicomSummaryTreeView(QTreeView):
 
     def build_model_from_series_dict(self, series_dict, keyword=None):
         model = QStandardItemModel()
-        model.setHorizontalHeaderLabels(['Series description', 'Nr. files'])
+        model.setHorizontalHeaderLabels(['patient_id', 'description', 'nr_files'])
         for suid, series_info in series_dict.items():
             description = series_info.get('description', '')
             if keyword is None or (keyword is not None and keyword in description):
+                patient_id = series_info.get('patient_id', '')
                 files = series_info.get('files', [])
                 nrfiles = len(files)
+                patient_id_item = QStandardItem(patient_id)
                 description_item = QStandardItem(description)
                 description_item.setData(suid, role=Qt.UserRole)
                 nrfiles_item = QStandardItem(str(nrfiles))
-                model.appendRow([description_item, nrfiles_item])
+                model.appendRow([patient_id_item, description_item, nrfiles_item])
                 for f in files:
                     f_item = QStandardItem(f)
-                    description_item.appendRow([f_item, QStandardItem('')])
+                    description_item.appendRow([f_item, QStandardItem(''), QStandardItem('')])
         return model

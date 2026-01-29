@@ -27,13 +27,15 @@ class CreateDicomSummaryProcess(Process):
                     if 'SeriesInstanceUID' in p:
                         if p.SeriesInstanceUID not in series_dict.keys():
                             series_dict[p.SeriesInstanceUID] = {
-                                'description': p.SeriesDescription,
-                                'rows': p.Rows,
-                                'cols': p.Columns,
-                                'spacingx': p.PixelSpacing[0],
-                                'spacingy': p.PixelSpacing[1],
-                                'thickness': p.SliceThickness,
-                                'manufacturer': p.Manufacturer,
+                                'patient_id': p.PatientID if 'PatientID' in p else '',
+                                'description': p.SeriesDescription if 'SeriesDescription' in p else '',
+                                'rows': p.Rows if 'Rows' in p else 0,
+                                'cols': p.Columns if 'Columns' in p else 0,
+                                'spacingx': p.PixelSpacing[0] if 'PixelSpacing' in p else 0.0,
+                                'spacingy': p.PixelSpacing[1] if 'PixelSpacing' in p else 0.0,
+                                'thickness': p.SliceThickness if 'SliceThickness' in p else 0.0,
+                                'image_type': p.ImageType if 'ImageType' in p else '',
+                                'manufacturer': p.Manufacturer if 'Manufacturer' in p else '',
                                 'files': [],
                             }
                         series_dict[p.SeriesInstanceUID]['files'].append(f_path)
@@ -47,12 +49,14 @@ class CreateDicomSummaryProcess(Process):
 
     def build_df_from_series_dict(self, series_dict):
         data = {
+            'patient_id': [],
             'description': [],
             'rows': [],
             'cols': [],
             'spacingx': [],
             'spacingy': [],
             'thickness': [],
+            'image_type': [],
             'manufacturer': [],
             'nr_files': [],
         }
