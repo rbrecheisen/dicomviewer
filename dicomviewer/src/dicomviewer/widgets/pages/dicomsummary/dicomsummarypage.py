@@ -157,7 +157,11 @@ class DicomSummaryPage(Page):
         QDesktopServices.openUrl(QUrl.fromLocalFile(str(p)))
 
     def handle_view_dicom_attributes_button(self):
-        self.dicom_attributes_view().exec()
+        data = self.results_table().data()
+        if data:        
+            self.dicom_attributes_view().set_data(data)
+            self.dicom_attributes_view().update_table_for('patient_id')
+            self.dicom_attributes_view().exec()
 
     def handle_filter_field(self, search_pattern):
         self.results_table().filter_model_with_search_pattern(search_pattern)

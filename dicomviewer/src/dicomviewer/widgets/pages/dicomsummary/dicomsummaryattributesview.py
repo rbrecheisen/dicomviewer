@@ -1,3 +1,4 @@
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QDialog,
     QHBoxLayout,
@@ -19,6 +20,9 @@ class DicomSummaryAttributesView(QDialog):
     # INITIALIZATION
 
     def init(self):
+        layout = QVBoxLayout(self)
+        layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self.table_view())        
         self.setWindowTitle('DICOM attributes')
         self.resize(800, 600)
 
@@ -26,11 +30,22 @@ class DicomSummaryAttributesView(QDialog):
 
     def data(self):
         return self._data
-
+    
     def set_data(self, data):
         self._data = data
-        for patient_id, item in self._data.items():
-            pass
+
+    def update_table_for(self, attribute_name):
+        if self.data():
+            model = QStandardItemModel()
+            model.setHorizontalHeaderLabels(['description', attribute_name])
+            for patient_id, series_info in self.data().items():
+                print(series_info)
+                # model.appendRow([
+                #     QStandardItem(series_info['description']), 
+                #     QStandardItem(str(series_info[attribute_name]))
+                # ])
+            self.table_view().setModel(model)
+            self.table_view().setSortingEnabled(True)
 
     def table_view(self):
         if not self._table_view:

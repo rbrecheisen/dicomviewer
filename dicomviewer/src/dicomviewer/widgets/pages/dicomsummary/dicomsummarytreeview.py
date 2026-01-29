@@ -75,6 +75,7 @@ class DicomSummaryTreeView(QTreeView):
             self._all_selected = mode
 
     def data(self):
+        # This method should return the full DICOM information, not just what's in the table!!!
         data = {}
         if self._model:
             root = self._model.invisibleRootItem()
@@ -95,11 +96,4 @@ class DicomSummaryTreeView(QTreeView):
     def matches(self, search_pattern, series_info):
         if search_pattern == '' or search_pattern in series_info['description']:
             return True
-        # search_pattern_items = [x.strip() for x in search_pattern.split(' ')]
-        # for item in search_pattern_items:
-        #     if '=' in item:
-        #         k, v = item.split('=')[0], item.split('=')[1]
-        #         if k in series_info.keys():
-        #             if v in str(series_info[k]):
-        #                 return True
         return False
