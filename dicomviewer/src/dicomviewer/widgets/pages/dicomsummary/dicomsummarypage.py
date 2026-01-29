@@ -91,7 +91,7 @@ class DicomSummaryPage(Page):
     
     def filter_field(self):
         if not self._filter_field:
-            self._filter_field = QLineEdit(placeholderText='Enter keyword to filter the descriptions...')
+            self._filter_field = QLineEdit(placeholderText='Enter keywords (separated by "|" or "&") to filter...')
             self._filter_field.textEdited.connect(self.handle_filter_field)
         return self._filter_field
     
