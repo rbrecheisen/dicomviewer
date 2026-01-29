@@ -4,6 +4,8 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QVBoxLayout,
     QTableView,
+    QHeaderView,
+    QSizePolicy,
 )
 from PySide6.QtGui import (
     QStandardItem, 
@@ -22,7 +24,7 @@ class DicomSummaryAttributesView(QDialog):
     def init(self):
         layout = QVBoxLayout(self)
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        layout.addWidget(self.table_view())        
+        layout.addWidget(self.table_view(), 1)
         self.setWindowTitle('DICOM attributes')
         self.resize(800, 600)
 
@@ -38,14 +40,19 @@ class DicomSummaryAttributesView(QDialog):
         if self.data():
             model = QStandardItemModel()
             model.setHorizontalHeaderLabels(['description', attribute_name])
-            for patient_id, series_info in self.data().items():
-                print(series_info)
-                # model.appendRow([
-                #     QStandardItem(series_info['description']), 
-                #     QStandardItem(str(series_info[attribute_name]))
-                # ])
+            for suid, series_info in self.data().items():
+                model.appendRow([
+                    QStandardItem(series_info['description']), 
+                    QStandardItem(str(series_info[attribute_name]))
+                ])
             self.table_view().setModel(model)
             self.table_view().setSortingEnabled(True)
+            self.table_view().setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            h = self.table_view().horizontalHeader()
+            h.setStretchLastSection(False)
+            h.setSectionResizeMode(0, QHeaderView.Stretch)
+            h.setSectionResizeMode(1, QHeaderView.ResizeToContents)
+            h.setMinimumSectionSize(80)
 
     def table_view(self):
         if not self._table_view:

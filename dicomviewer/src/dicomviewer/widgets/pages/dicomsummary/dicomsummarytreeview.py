@@ -75,25 +75,37 @@ class DicomSummaryTreeView(QTreeView):
             self._all_selected = mode
 
     def data(self):
-        # This method should return the full DICOM information, not just what's in the table!!!
         data = {}
         if self._model:
             root = self._model.invisibleRootItem()
             for idx in range(root.rowCount()):
                 description_item = root.child(idx, 0)
                 if description_item.checkState() == Qt.CheckState.Checked:
-                    patient_item = root.child(idx, 1)
-                    if patient_item.text() not in data.keys():
-                        data[patient_item.text()] = {
-                            'description': description_item.text(),
-                            'files': [],
-                        }
-                    for idx2 in range(description_item.rowCount()):
-                        file_item = description_item.child(idx2)
-                        data[patient_item.text()]['files'].append(file_item.text())
+                    suid = description_item.data(role=Qt.UserRole)
+                    series_info = self.series_dict()[suid]
+                    if suid not in data.keys():
+                        data[suid] = series_info
         return data
     
     def matches(self, search_pattern, series_info):
-        if search_pattern == '' or search_pattern in series_info['description']:
+        def contains(item, info):
+            for k, v in info.items():
+                if item in str(v).lower():
+                    return True
+            return False
+        search_pattern = search_pattern.lower()
+        if search_pattern is None or search_pattern == '':
             return True
-        return False
+        if '|' in search_pattern:
+            items = search_pattern.split('|')
+            for item in items:
+                if item != '' and contains(item, series_info):
+                    return True
+            return False
+        if '&' in search_pattern:
+            items = search_pattern.split('&')
+            for item in items:
+                if not contains(item, series_info):
+                    return False
+            return True
+        return contains(search_pattern, series_info)

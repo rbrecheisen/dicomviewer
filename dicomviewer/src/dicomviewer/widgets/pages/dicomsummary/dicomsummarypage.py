@@ -44,7 +44,7 @@ class DicomSummaryPage(Page):
         button_layout.addWidget(self.load_dicom_dir_button())
         button_layout.addWidget(self.copy_selected_series_to_output_dir_button())
         button_layout.addWidget(self.view_output_dir_button())
-        button_layout.addWidget(self.view_dicom_attributes_button())
+        # button_layout.addWidget(self.view_dicom_attributes_button())
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         layout.addLayout(button_layout)
@@ -136,10 +136,10 @@ class DicomSummaryPage(Page):
         if dir_path:
             clicked = message_box.clickedButton()
             self.clear_directory(dir_path)
-            for patient_id, item in data.items():
+            for suid, item in data.items():
                 target_dir_path = dir_path
                 if clicked == yes:
-                    target_dir_path = os.path.join(dir_path, patient_id)
+                    target_dir_path = os.path.join(dir_path, item['patient_id'])
                     os.makedirs(target_dir_path, exist_ok=True)
                 description = item['description']
                 for f_path in item['files']:
