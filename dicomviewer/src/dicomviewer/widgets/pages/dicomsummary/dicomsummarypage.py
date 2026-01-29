@@ -107,11 +107,13 @@ class DicomSummaryPage(Page):
             self._loading_process.start()
 
     def handle_copy_selected_series_to_output_dir_button(self):
-        message_box = QMessageBox()
-        message_box.setIcon(QMessageBox.Question)
-        message_box.setWindowTitle('Choose')
-        message_box.setText('Do you want to create separate patient folders?')
-        button_y = message_box.addButton('Yes', QMessageBox.AcceptRole)
+        data = self.results_table().data()
+        if len(data.keys()) == 0:
+            QMessageBox.warning(self, 'Warning', 'No series selected')
+            return
+        message_box = QMessageBox(
+            QMessageBox.Question, 'Choose action', 'Do you want to create separate patient folders?')
+        yes = message_box.addButton('Yes', QMessageBox.AcceptRole)
         message_box.addButton('No', QMessageBox.DestructiveRole)
         message_box.exec()
         last_directory = self.settings().get('last_directory')
@@ -119,10 +121,9 @@ class DicomSummaryPage(Page):
         if dir_path:
             clicked = message_box.clickedButton()
             self.clear_directory(dir_path)
-            data = self.results_table().data()
             for patient_id, item in data.items():
                 target_dir_path = dir_path
-                if clicked == button_y:
+                if clicked == yes:
                     target_dir_path = os.path.join(dir_path, patient_id)
                     os.makedirs(target_dir_path, exist_ok=True)
                 description = item['description']

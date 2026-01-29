@@ -77,13 +77,14 @@ class DicomSummaryTreeView(QTreeView):
             root = self._model.invisibleRootItem()
             for idx in range(root.rowCount()):
                 description_item = root.child(idx, 0)
-                patient_item = root.child(idx, 1)
-                if patient_item.text() not in data.keys():
-                    data[patient_item.text()] = {
-                        'description': description_item.text(),
-                        'files': [],
-                    }
-                for idx2 in range(description_item.rowCount()):
-                    file_item = description_item.child(idx2)
-                    data[patient_item.text()]['files'].append(file_item.text())
+                if description_item.checkState() == Qt.CheckState.Checked:
+                    patient_item = root.child(idx, 1)
+                    if patient_item.text() not in data.keys():
+                        data[patient_item.text()] = {
+                            'description': description_item.text(),
+                            'files': [],
+                        }
+                    for idx2 in range(description_item.rowCount()):
+                        file_item = description_item.child(idx2)
+                        data[patient_item.text()]['files'].append(file_item.text())
         return data
