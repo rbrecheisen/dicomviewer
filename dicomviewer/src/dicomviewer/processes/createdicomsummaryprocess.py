@@ -38,9 +38,9 @@ class CreateDicomSummaryProcess(Process):
                                 'manufacturer': p.Manufacturer if 'Manufacturer' in p else '',
                                 'files': [],
                             }
+                            self.progress.emit(count)
+                            count += 1
                         series_dict[p.SeriesInstanceUID]['files'].append(f_path)
-                        self.progress.emit(count)
-                        count += 1
                     else:
                         print(f'DICOM file has no SeriesInstanceUID')
         return series_dict
