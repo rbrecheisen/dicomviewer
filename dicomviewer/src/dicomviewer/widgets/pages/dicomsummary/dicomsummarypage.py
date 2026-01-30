@@ -135,7 +135,7 @@ class DicomSummaryPage(Page):
         dir_path = QFileDialog.getExistingDirectory(dir=last_directory)
         if dir_path:
             clicked = message_box.clickedButton()
-            self.clear_directory(dir_path)
+            # self.clear_directory(dir_path)
             for suid, item in data.items():
                 target_dir_path = dir_path
                 if clicked == yes:
