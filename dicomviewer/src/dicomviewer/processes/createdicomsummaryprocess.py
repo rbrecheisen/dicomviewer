@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from dicomviewer.processes.process import Process
+from rbeesoft.app.ui.processes.process import Process
 from dicomviewer.utils.utils import is_dicom, load_dicom
 
 

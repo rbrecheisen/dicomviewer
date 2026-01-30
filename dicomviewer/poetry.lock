@@ -197,14 +197,14 @@ files = [
 
 [[package]]
 name = "rbeesoft"
-version = "2.0.0"
+version = "2.0.2"
 description = ""
 optional = false
 python-versions = "<3.12,>=3.11"
 groups = ["main"]
 files = [
-    {file = "rbeesoft-2.0.0-py3-none-any.whl", hash = "sha256:4bc1402e4f593ebc822a08839697472b2ca2cbf9283c2954e04f74b83679d153"},
-    {file = "rbeesoft-2.0.0.tar.gz", hash = "sha256:49fc6d7410c1d485c685de8ebf14e5304b9172b6e769c827257a10552f2c2615"},
+    {file = "rbeesoft-2.0.2-py3-none-any.whl", hash = "sha256:19bbb87edfca3cd9b3d3d00bc3eae939e773686a81cf53aea1de6fdc491ac3b4"},
+    {file = "rbeesoft-2.0.2.tar.gz", hash = "sha256:677a3519dcec97e6f564935634813406412714f97c354fd798ad5fadba5a8f3f"},
 ]
 
 [[package]]
@@ -231,4 +231,4 @@ type = ["importlib_metadata (>=7.0.2) ; python_version < \"3.10\"", "jaraco.deve
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.12"
-content-hash = "59f0cdb3d92227f488d1d4e615e032c3bbbfd43b13785940268fc0302e045867"
+content-hash = "2d257dabbf05762019260374fa35053cbb5147935424ba169d57c2d2f63a4521"
