@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QDesktopServices
 from rbeesoft.app.ui.widgets.pages.page import Page
+from rbeesoft.app.ui.processes.processrunner import ProcessRunner
 from rbeesoft.common.logmanager import LogManager
 from dicomviewer.widgets.pages.dicomsummary.progresscounter import ProgressCounter
 from dicomviewer.widgets.pages.dicomsummary.dicomsummarytreeview import DicomSummaryTreeView
@@ -28,6 +29,7 @@ class DicomSummaryPage(Page):
         self._copy_selected_series_to_output_dir_button = None
         self._view_output_dir_button = None
         self._loading_process = None
+        self._process_runner = None
         self._progress_counter = None
         self._results_table = None
         self._filter_field = None
@@ -92,6 +94,11 @@ class DicomSummaryPage(Page):
             self._select_all_or_none_checkbox.checkStateChanged.connect(self.handle_selection_changed)
         return self._select_all_or_none_checkbox
     
+    def process_runner(self):
+        if not self._process_runner:
+            self._process_runner = ProcessRunner()
+        return self._process_runner
+    
     # EVENT HANDLERS
 
     def handle_load_dicom_dir_button(self):
@@ -100,11 +107,12 @@ class DicomSummaryPage(Page):
         if dir_path:
             self.progress_counter().show()
             self.settings().set('last_directory', dir_path)
-            self._loading_process = CreateDicomSummaryProcess(dir_path)
-            self._loading_process.progress.connect(self.handle_progress)
-            self._loading_process.finished.connect(self.handle_finished)
-            self._loading_process.failed.connect(self.handle_failed)
-            self._loading_process.start()
+            self.process_runner().start(
+                CreateDicomSummaryProcess(dir_path),
+                self.handle_progress,
+                self.handle_finished,
+                self.handle_failed,
+            )
 
     def handle_copy_selected_series_to_output_dir_button(self):
         data = self.results_table().data()
