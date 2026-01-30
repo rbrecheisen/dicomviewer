@@ -6,7 +6,9 @@ from dicomviewer.mainwindow import MainWindow
 def main():
     QtWidgets.QApplication.setApplicationName('dicomviewer')
     app = QtWidgets.QApplication(sys.argv)
-    window = MainWindow()
+    window = MainWindow(
+        app.style().standardIcon(QtWidgets.QStyle.StandardPixmap.SP_ArrowForward)
+    )
     window.show()
     sys.exit(app.exec())
 

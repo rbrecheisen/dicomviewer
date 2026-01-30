@@ -3,7 +3,7 @@ import math
 import pydicom
 import warnings
 from pydicom.uid import ExplicitVRLittleEndian, ImplicitVRLittleEndian, ExplicitVRBigEndian
-from dicomviewer.utils.logmanager import LogManager
+from rbeesoft.common.logmanager import LogManager
 warnings.filterwarnings("ignore", message="Invalid value for VR UI:", category=UserWarning)
 
 LOG = LogManager()

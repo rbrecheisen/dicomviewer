@@ -12,12 +12,11 @@ from PySide6.QtWidgets import (
     QCheckBox,
 )
 from PySide6.QtGui import QDesktopServices
-from dicomviewer.widgets.pages.page import Page
+from rbeesoft.app.ui.widgets.pages.page import Page
+from rbeesoft.common.logmanager import LogManager
 from dicomviewer.widgets.pages.dicomsummary.progresscounter import ProgressCounter
 from dicomviewer.widgets.pages.dicomsummary.dicomsummarytreeview import DicomSummaryTreeView
-from dicomviewer.widgets.pages.dicomsummary.dicomsummaryattributesview import DicomSummaryAttributesView
 from dicomviewer.processes.createdicomsummaryprocess import CreateDicomSummaryProcess
-from dicomviewer.utils.logmanager import LogManager
 
 LOG = LogManager()
 
@@ -28,13 +27,11 @@ class DicomSummaryPage(Page):
         self._load_dicom_dir_button = None
         self._copy_selected_series_to_output_dir_button = None
         self._view_output_dir_button = None
-        self._view_dicom_attributes_button = None
         self._loading_process = None
         self._progress_counter = None
         self._results_table = None
         self._filter_field = None
         self._select_all_or_none_checkbox = None
-        self._dicom_attributes_view = None
         self.init()
 
     # INITIALIZATION
@@ -44,7 +41,6 @@ class DicomSummaryPage(Page):
         button_layout.addWidget(self.load_dicom_dir_button())
         button_layout.addWidget(self.copy_selected_series_to_output_dir_button())
         button_layout.addWidget(self.view_output_dir_button())
-        # button_layout.addWidget(self.view_dicom_attributes_button())
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         layout.addLayout(button_layout)
@@ -73,12 +69,6 @@ class DicomSummaryPage(Page):
             self._view_output_dir_button.clicked.connect(self.handle_view_output_dir_button)
         return self._view_output_dir_button
     
-    def view_dicom_attributes_button(self):
-        if not self._view_dicom_attributes_button:
-            self._view_dicom_attributes_button = QPushButton('View DICOM attributes...')
-            self._view_dicom_attributes_button.clicked.connect(self.handle_view_dicom_attributes_button)
-        return self._view_dicom_attributes_button
-    
     def progress_counter(self):
         if not self._progress_counter:
             self._progress_counter = ProgressCounter(self)
@@ -101,11 +91,6 @@ class DicomSummaryPage(Page):
             self._select_all_or_none_checkbox.setChecked(True)
             self._select_all_or_none_checkbox.checkStateChanged.connect(self.handle_selection_changed)
         return self._select_all_or_none_checkbox
-    
-    def dicom_attributes_view(self):
-        if not self._dicom_attributes_view:
-            self._dicom_attributes_view = DicomSummaryAttributesView(self)
-        return self._dicom_attributes_view
     
     # EVENT HANDLERS
 
@@ -155,13 +140,6 @@ class DicomSummaryPage(Page):
         if p.is_file():
             p = p.parent
         QDesktopServices.openUrl(QUrl.fromLocalFile(str(p)))
-
-    def handle_view_dicom_attributes_button(self):
-        data = self.results_table().data()
-        if data:        
-            self.dicom_attributes_view().set_data(data)
-            self.dicom_attributes_view().update_table_for('patient_id')
-            self.dicom_attributes_view().exec()
 
     def handle_filter_field(self, search_pattern):
         self.results_table().filter_model_with_search_pattern(search_pattern)
