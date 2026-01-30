@@ -7,7 +7,7 @@ class MainWindow(RbeesoftMainWindow):
         super(MainWindow, self).__init__(
             bundle_identifier='rbeesoft.nl',
             app_name='dicomviewer',
-            app_title='DICOM Viewer 1.0',
+            app_title='DICOM Summary Viewer 1.0',
             width=800,
             height=600,
             app_icon=app_icon,

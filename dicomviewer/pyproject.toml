@@ -1,6 +1,6 @@
 [project]
 name = "dicomviewer"
-version = "0.1.0"
+version = "1.0"
 description = ""
 authors = [
     {name = "Brecheisen", email = "r.brecheisen@maastrichtuniversity.nl"}
