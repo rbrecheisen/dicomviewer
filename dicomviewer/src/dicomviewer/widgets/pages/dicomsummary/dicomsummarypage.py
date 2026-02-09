@@ -10,6 +10,9 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QLineEdit,
     QCheckBox,
+    QListView,
+    QTreeView,
+    QAbstractItemView,
 )
 from PySide6.QtGui import QDesktopServices
 from rbeesoft.app.ui.widgets.pages.page import Page
@@ -99,16 +102,31 @@ class DicomSummaryPage(Page):
             self._process_runner = ProcessRunner()
         return self._process_runner
     
+    def get_existing_directories(self, parent=None, caption="Select folders", start_dir=""):
+        dlg = QFileDialog(parent, caption, start_dir)
+        dlg.setFileMode(QFileDialog.FileMode.Directory)
+        dlg.setOption(QFileDialog.Option.DontUseNativeDialog, True)
+        dlg.setOption(QFileDialog.Option.ShowDirsOnly, True)
+
+        # Enable multi-selection in the dialog's internal views
+        for view in dlg.findChildren(QAbstractItemView):
+            view.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+
+        if dlg.exec():
+            return dlg.selectedFiles()   # list[str] of selected directories
+        return []
+    
     # EVENT HANDLERS
 
     def handle_load_dicom_dir_button(self):
         last_directory = self.settings().get('last_directory')
-        dir_path = QFileDialog.getExistingDirectory(dir=last_directory)
-        if dir_path:
+        # dir_path = QFileDialog.getExistingDirectory(dir=last_directory)
+        dir_paths = self.get_existing_directories(start_dir=last_directory)
+        if len(dir_paths) > 0:
             self.progress_counter().show()
-            self.settings().set('last_directory', dir_path)
+            self.settings().set('last_directory', dir_paths[0])
             self.process_runner().start(
-                CreateDicomSummaryProcess(dir_path),
+                CreateDicomSummaryProcess(dir_paths),
                 self.handle_progress,
                 self.handle_finished,
                 self.handle_failed,
