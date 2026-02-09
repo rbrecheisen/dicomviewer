@@ -177,6 +177,7 @@ class DicomSummaryPage(Page):
         self.progress_counter().set_progress(progress + 1)
 
     def handle_finished(self, result):
+        self.progress_counter().hide()
         self.results_table().update_model(result)
 
     def handle_failed(self, error):
