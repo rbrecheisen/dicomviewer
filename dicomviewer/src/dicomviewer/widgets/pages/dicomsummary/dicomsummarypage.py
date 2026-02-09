@@ -150,7 +150,10 @@ class DicomSummaryPage(Page):
             for suid, item in data.items():
                 target_dir_path = dir_path
                 if clicked == yes:
-                    target_dir_path = os.path.join(dir_path, item['patient_id'])
+                    target_dir_path = os.path.join(dir_path, item['patient_id'], item['description'])
+                    os.makedirs(target_dir_path, exist_ok=True)
+                else:
+                    target_dir_path = os.path.join(dir_path, item['description'])
                     os.makedirs(target_dir_path, exist_ok=True)
                 description = item['description']
                 for f_path in item['files']:
